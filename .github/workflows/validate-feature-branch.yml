@@ -118,7 +118,7 @@ jobs:
         run: yarn test
 
   build:
-    name: Build
+    name: Build and Upload Artifacts
     runs-on: ubuntu-latest
 
     steps:
@@ -133,5 +133,27 @@ jobs:
       - name: Install dependencies
         run: yarn install
 
-      - name: Run build
+      - name: Build
         run: yarn build
+
+      - name: Upload build artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: out/
+
+  deploy:
+    name: Deploy
+    needs: build
+    runs-on: ubuntu-latest
+
+    environment:
+      name: github-pages
+
+    permissions:
+      id-token: write
+      pages: write
+
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
